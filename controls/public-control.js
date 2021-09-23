@@ -194,10 +194,10 @@ exports.updateSiteData = async(req, res) => {
 exports.getSiteData = async(req, res) => {
     try {
             const datas = await SiteData.find().limit(1);
-            const data =  datas[0];
-            if(DataTransfer,length === 0) {
+            if(datas.length === 0) {
                 await new SiteData().save();
             } 
+            const data =  datas[0];
             delete data['stripe_publishable_api_key'];
             delete data['stripe_secret_key'];
             res.json({siteData: data});
