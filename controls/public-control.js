@@ -9,6 +9,7 @@ const jwt = require("jsonwebtoken");
 const nodemailer = require("nodemailer");
 
 const cloudinary = require('cloudinary').v2;
+const siteData = require("../models/site-data");
 cloudinary.config({
     cloud_name: 'farghaly-developments',
     api_key: '789929815277853',
@@ -194,6 +195,9 @@ exports.getSiteData = async(req, res) => {
     try {
             const datas = await SiteData.find().limit(1);
             const data =  datas[0];
+            if(DataTransfer,length === 0) {
+                await new SiteData().save();
+            } 
             delete data['stripe_publishable_api_key'];
             delete data['stripe_secret_key'];
             res.json({siteData: data});
@@ -279,6 +283,8 @@ exports.getAdminEmail = async(req, res) => {
 
 exports.resetPassword = async(req, res) => {
     try {
+        const sitEData = await SiteData.find().limit(1);
+        const sender_email = siteData[0].email;
         const email = req.params.email;
         console.log(email)
         // return;
@@ -286,13 +292,13 @@ exports.resetPassword = async(req, res) => {
         const transporter = nodemailer.createTransport({
         service: 'gmail',
         auth: {
-            user: "miserable.farghaly93@gmail.com",
+            user: sender_email,
             pass: 'saadawy_1993'
         }
         });
 
         const mailOptions = {
-        from: 'miserable.farghaly93@gmail.com',
+        from: sender_email,
         to: email,
         subject: 'هذه كلمة المرور الجديدة الخاصة بك سجل بها الدخول لتستعيد نشاطك على المنصة ويمكنك تغييرها فيما بعد',
         html: `<h1>${password}</h1>` 
