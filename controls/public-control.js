@@ -51,7 +51,7 @@ function uploadFile(file, fileName) {
                 let modified = "";
                 if(url.includes("https")) modified = url;
                 else {
-                    modified = "https" = url.split("http")[1]
+                    modified = "https" + url.split("http")[1]
                 } 
                 return resolve(modified);
             })
