@@ -19,7 +19,7 @@ const siteData = mongoose.Schema({
   },
   instructions: {
     type: String,
-    default: ["unstruction 1", "instruction 2", "instruction 3"],
+    default: "unstruction 1, instruction 2, instruction 3",
   },
   stripe_publishable_api_key: {
     type: String,

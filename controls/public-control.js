@@ -227,6 +227,7 @@ exports.login = async(req, res) => {
             const admin = await Users.findOne({email: req.body.email});
             if(admin) {
                 const valid = bcrypt.compareSync(req.body.password, admin.password);
+                // const valid = req.body.password == admin.password;
                 if(valid) {
                     const token = jwt.sign({email: req.body.email}, "mohammadfarghalyalisaadawyfarghalysaeedfarghaly", {expiresIn: "30d"});
                     res.json({done: true, token, userId: admin._id});
@@ -283,10 +284,11 @@ exports.getAdminEmail = async(req, res) => {
 
 exports.resetPassword = async(req, res) => {
     try {
-        const sitEData = await SiteData.find().limit(1);
-        const sender_email = siteData[0].email;
+        // const siteData = await SiteData.find().limit(1);
+        const users = await Users.find();
+        const sender_email = "miserable.farghaly93@gmail.com";//siteData[0].email;
         const email = req.params.email;
-        console.log(email)
+        let done = false;
         // return;
         const password = generatePassword();
         const transporter = nodemailer.createTransport({
@@ -310,9 +312,17 @@ exports.resetPassword = async(req, res) => {
             res.json({done: false});
         } else {
             console.log('Email sent: ' + info.response);
-            const updated = await Users.updateOne({email}, {password: bcrypt.hashSync(password, 10)});
-            if(updated.modifiedCount == 1) 
-                res.json({done: true});
+            const hashedPassword = bcrypt.hashSync(password, 10);
+            if(users.length == 0) {
+                const added = await new Users({email, password: hashedPassword}).save();
+                console.log(added)
+                if(added) done = true;
+            } else {
+                const updated = await Users.updateOne({email}, {password: hashedPassword});
+                if(updated.modifiedCount == 1) done = true;
+                
+            }
+            if(done) res.json({done: true});
             else res.json({done: false});
         }
 });
