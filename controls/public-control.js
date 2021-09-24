@@ -47,7 +47,13 @@ function uploadFile(file, fileName) {
             },
             (err, result) => {
                 if(err) return reject(err);
-                return resolve(result.url);
+                const url = result.url;
+                let modified = "";
+                if(url.includes("https")) modified = url;
+                else {
+                    modified = "https" = url.split("http")[1]
+                } 
+                return resolve(modified);
             })
     })
 }
